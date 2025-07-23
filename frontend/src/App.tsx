@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-const BASE_URL = import.meta.env.LEADERBOARD_API_URL;
+const BASE_URL = "https://gaming-leaderboard-9euy.onrender.com";
 interface UserRank {
   user_id: number;
   username: string;
