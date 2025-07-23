@@ -211,14 +211,6 @@ GET /api/leaderboard/rank/{user_id}
 
 ## 🔧 Configuration
 
-### Environment Variables
-
-| Variable       | Description                  | Default                               |
-| -------------- | ---------------------------- | ------------------------------------- |
-| `DATABASE_URL` | PostgreSQL connection string | Required                              |
-| `REDIS_URL`    | Redis connection string      | Required                              |
-| `CORS_ORIGINS` | Allowed frontend origins     | `https://leaderboard-fe.onrender.com` |
-
 ### Caching
 
 The system uses Redis for caching leaderboard data to improve performance:
@@ -234,13 +226,6 @@ The system uses Redis for caching leaderboard data to improve performance:
 ```bash
 # Run with pytest (if tests are added)
 pytest app/tests/
-```
-
-### Frontend Testing
-
-```bash
-cd frontend
-npm test
 ```
 
 ## 📊 Monitoring

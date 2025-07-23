@@ -7,7 +7,7 @@ load_dotenv()
 r = Redis.from_env()
 
 def cache_leaderboard(data):
-    r.set("top_leaderboard", json.dumps(data), ex=3600)
+    r.set("top_leaderboard", json.dumps(data), ex=300)
 
 def get_cached_leaderboard():
     val = r.get("top_leaderboard")
