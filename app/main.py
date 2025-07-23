@@ -2,9 +2,9 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 
-from database import SessionLocal, Base, engine
-from schemas import ScoreSubmissionInput
-from services import submit_score, get_top_players, get_user_rank
+from .database import SessionLocal, Base, engine
+from .schemas import ScoreSubmissionInput
+from .services import submit_score, get_top_players, get_user_rank
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

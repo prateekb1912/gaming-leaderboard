@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
-from models import GameSession, Leaderboard
-from utils import recalculate_leaderboard
-from cache import get_cached_leaderboard, cache_leaderboard, invalidate_leaderboard_cache
+from .models import GameSession, Leaderboard
+from .utils import recalculate_leaderboard
+from .cache import get_cached_leaderboard, cache_leaderboard, invalidate_leaderboard_cache
 
 def submit_score(db: Session, user_id: int, score: int):
     try:

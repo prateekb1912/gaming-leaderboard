@@ -1,10 +1,11 @@
 from contextlib import contextmanager
 from time import sleep
+from sqlalchemy import func, update
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import Session
 from sqlalchemy.sql import text
-from models import GameSession, Leaderboard
-from sqlalchemy import func, update
+
+from .models import GameSession, Leaderboard
 
 @contextmanager
 def serializable_transaction(db: Session):
