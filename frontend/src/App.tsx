@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-interface Leaderboard {
+interface UserRank {
   user_id: number;
   username: string;
   total_score: number;
@@ -10,9 +10,9 @@ interface Leaderboard {
 }
 
 function App() {
-  const [leaderboard, setLeaderboard] = useState([]);
+  const [leaderboard, setLeaderboard] = useState<UserRank[]>([]);
   const [userId, setUserId] = useState("");
-  const [userRank, setUserRank] = useState(null);
+  const [userRank, setUserRank] = useState<UserRank | null>(null);
   const [loading, setLoading] = useState(false);
 
   const fetchLeaderboard = async () => {
@@ -45,55 +45,75 @@ function App() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-4">
-      <h1 className="text-3xl font-bold mb-6">🎮 Live Leaderboard</h1>
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white p-4 font-sans">
+      <div className="max-w-3xl mx-auto">
+        <h1 className="text-4xl font-extrabold text-center mb-8">
+          🎮 Gaming Leaderboard
+        </h1>
 
-      <div className="mb-8">
-        <h2 className="text-xl font-semibold mb-2">Top 10 Players</h2>
-        <table className="w-full table-auto border-collapse">
-          <thead>
-            <tr className="bg-gray-700">
-              <th className="px-4 py-2">Rank</th>
-              <th className="px-4 py-2">User</th>
-              <th className="px-4 py-2">Total Score</th>
-            </tr>
-          </thead>
-          <tbody>
-            {leaderboard.map((entry: Leaderboard) => (
-              <tr key={entry.user_id} className="border-b border-gray-700">
-                <td className="px-4 py-2">{entry.rank}</td>
-                <td className="px-4 py-2">{entry.username}</td>
-                <td className="px-4 py-2">{entry.total_score}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      <div className="mb-4">
-        <h2 className="text-xl font-semibold mb-2">Check Your Rank</h2>
-        <input
-          type="number"
-          className="text-black p-2 mr-2 rounded"
-          placeholder="Enter User ID"
-          value={userId}
-          onChange={(e) => setUserId(e.target.value)}
-        />
-        <button
-          onClick={fetchUserRank}
-          className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded"
-        >
-          Check
-        </button>
-      </div>
-
-      {loading && <p className="text-yellow-400">Loading...</p>}
-      {userRank && (
-        <div className="mt-2 text-green-400">
-          <p>User ID: {userRank.user_id}</p>
-          <p>Rank: {userRank.rank}</p>
+        <div className="bg-gray-800 rounded-xl shadow-md p-6 mb-10">
+          <h2 className="text-2xl font-semibold mb-4">🏆 Top 10 Players</h2>
+          <div className="overflow-x-auto">
+            <table className="min-w-full table-auto text-sm">
+              <thead>
+                <tr className="bg-gray-700 text-left">
+                  <th className="px-4 py-2">Rank</th>
+                  <th className="px-4 py-2">User</th>
+                  <th className="px-4 py-2">Total Score</th>
+                </tr>
+              </thead>
+              <tbody>
+                {leaderboard.map((entry) => (
+                  <tr
+                    key={entry.user_id}
+                    className="border-b border-gray-600 hover:bg-gray-700"
+                  >
+                    <td className="px-4 py-2 font-medium">{entry.rank}</td>
+                    <td className="px-4 py-2">{entry.username}</td>
+                    <td className="px-4 py-2 text-green-400">
+                      {entry.total_score}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
-      )}
+
+        <div className="bg-gray-800 rounded-xl shadow-md p-6">
+          <h2 className="text-2xl font-semibold mb-4">🔍 Check Your Rank</h2>
+          <div className="flex items-center space-x-4 mb-4">
+            <input
+              type="number"
+              className="text-black p-2 rounded w-full max-w-xs"
+              placeholder="Enter User ID"
+              value={userId}
+              onChange={(e) => setUserId(e.target.value)}
+            />
+            <button
+              onClick={fetchUserRank}
+              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition"
+            >
+              Check
+            </button>
+          </div>
+
+          {loading && <p className="text-yellow-400">⏳ Loading...</p>}
+          {userRank && (
+            <div className="mt-2 text-green-400 space-y-1">
+              <p>
+                ✅ <strong>User:</strong> {userRank.username}
+              </p>
+              <p>
+                🏅 <strong>Rank:</strong> {userRank.rank}
+              </p>
+              <p>
+                🎮 <strong>Total Score:</strong> {userRank.total_score}
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
