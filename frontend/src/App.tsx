@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
+const BASE_URL = import.meta.env.LEADERBOARD_API_URL;
 interface UserRank {
   user_id: number;
   username: string;
@@ -17,7 +18,7 @@ function App() {
 
   const fetchLeaderboard = async () => {
     try {
-      const res = await axios.get("/api/leaderboard/top");
+      const res = await axios.get(BASE_URL + "/api/leaderboard/top");
       setLeaderboard(res.data);
     } catch (err) {
       console.error("Error fetching leaderboard:", err);
@@ -28,7 +29,7 @@ function App() {
     try {
       if (!userId) return;
       setLoading(true);
-      const res = await axios.get(`/api/leaderboard/rank/${userId}`);
+      const res = await axios.get(`${BASE_URL}/api/leaderboard/rank/${userId}`);
       setUserRank(res.data);
     } catch (err) {
       console.error("Error fetching user rank:", err);
