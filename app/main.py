@@ -25,7 +25,7 @@ def get_db():
 app = FastAPI(lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://leaderboard-fe.onrender.com"],
+    allow_origins=["https://leaderboard-fe.onrender.com", "http://localhost:5173"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -34,7 +34,9 @@ app.add_middleware(
 @newrelic.agent.web_transaction(name="submit_score")
 @app.post("/api/leaderboard/submit")
 def submit(payload: ScoreSubmissionInput, db: Session = Depends(get_db)):
-    submit_score(db, payload.user_id, payload.score)
+    res = submit_score(db, payload.user_id, payload.score)
+    if res is None:
+        return {"status": "error", "message": "Failed to submit score"}
     return {"status": "success"}
 
 @newrelic.agent.web_transaction(name="top_players")

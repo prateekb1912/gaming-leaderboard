@@ -12,7 +12,7 @@ def submit_score(db: Session, user_id: int, score: int):
         invalidate_leaderboard_cache()
     except Exception:
         db.rollback()
-        raise
+        return None
 
 def get_top_players(db: Session, limit=10):
     cached = get_cached_leaderboard()
