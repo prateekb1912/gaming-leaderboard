@@ -1,8 +1,34 @@
+from contextlib import contextmanager
+from time import sleep
+from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import Session
+from sqlalchemy.sql import text
 from models import GameSession, Leaderboard
 from sqlalchemy import func, update
 
-def recalculate_leaderboard(db: Session, user_id: int):
+@contextmanager
+def serializable_transaction(db: Session):
+    db.execute(text("SET TRANSACTION ISOLATION LEVEL SERIALIZABLE"))
+    try:
+        yield 
+        db.commit()
+    except Exception as e:
+        db.rollback()
+        raise e
+
+def recalculate_leaderboard(db: Session, user_id: int, max_retries: int = 3):
+    for _ in range(max_retries):
+        try:
+            with serializable_transaction(db):
+                update_ranking(db, user_id)
+            break
+        except OperationalError as e:
+            if "could not serialize access" in str(e):
+                sleep(0.1)
+                continue
+            raise 
+
+def update_ranking(db: Session, user_id: int):
     """
     Recalculate the leaderboard after a user's score has been updated.
     """
@@ -39,5 +65,4 @@ def recalculate_leaderboard(db: Session, user_id: int):
             Leaderboard.user_id != user_id
         ).values(rank=Leaderboard.rank - 1)
     
-    db.execute(stmt)
-    db.commit()
+    db.execute(stmt.execution_options(synchronize_session=False))
