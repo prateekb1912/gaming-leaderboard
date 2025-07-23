@@ -1,11 +1,15 @@
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 
-from database import SessionLocal
+from database import SessionLocal, Base, engine
 from schemas import ScoreSubmissionInput
 from services import submit_score, get_top_players, get_user_rank
 
-app = FastAPI()
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    Base.metadata.create_all(bind=engine)
+    yield
 
 def get_db():
     db = SessionLocal()
@@ -13,6 +17,8 @@ def get_db():
         yield db
     finally:
         db.close()
+
+app = FastAPI(lifespan=lifespan)
 
 @app.post("/api/leaderboard/submit")
 def submit(payload: ScoreSubmissionInput, db: Session = Depends(get_db)):
