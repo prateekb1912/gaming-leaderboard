@@ -1,7 +1,16 @@
 import redis
 import json
+import os
+from dotenv import load_dotenv
 
-r = redis.Redis(host="localhost", port=6379, decode_responses=True)
+load_dotenv()
+
+r = redis.Redis(
+    host=os.getenv("REDIS_HOST", "localhost"),
+    port=os.getenv("REDIS_PORT", "6379"),
+    decode_responses=True,
+    password=os.getenv("REDIS_PASSWORD", ""),
+)
 
 def cache_leaderboard(data):
     r.set("top_leaderboard", json.dumps(data), ex=3600)
