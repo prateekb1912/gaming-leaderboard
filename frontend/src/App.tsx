@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-const BASE_URL = "https://gaming-leaderboard-9euy.onrender.com";
 interface UserRank {
   user_id: number;
   username: string;
@@ -16,8 +15,12 @@ function App() {
   const [userRank, setUserRank] = useState<UserRank | null>(null);
   const [loading, setLoading] = useState(false);
 
+  // Define BASE_URL inside the component to ensure it's properly bundled
+  const BASE_URL = "https://gaming-leaderboard-9euy.onrender.com";
+
   const fetchLeaderboard = async () => {
     try {
+      console.log("Making request to:", BASE_URL + "/api/leaderboard/top");
       const res = await axios.get(BASE_URL + "/api/leaderboard/top");
       setLeaderboard(res.data);
     } catch (err) {
@@ -29,6 +32,10 @@ function App() {
     try {
       if (!userId) return;
       setLoading(true);
+      console.log(
+        "Making request to:",
+        `${BASE_URL}/api/leaderboard/rank/${userId}`
+      );
       const res = await axios.get(`${BASE_URL}/api/leaderboard/rank/${userId}`);
       setUserRank(res.data);
     } catch (err) {
