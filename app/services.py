@@ -4,11 +4,15 @@ from utils import recalculate_leaderboard
 from cache import get_cached_leaderboard, cache_leaderboard, invalidate_leaderboard_cache
 
 def submit_score(db: Session, user_id: int, score: int):
-    session = GameSession(user_id=user_id, score=score, game_mode='solo')
-    db.add(session)
-    db.commit()
-    recalculate_leaderboard(db, user_id)
-    invalidate_leaderboard_cache()
+    try:
+        session = GameSession(user_id=user_id, score=score, game_mode='solo')
+        db.add(session)
+        db.commit()
+        recalculate_leaderboard(db, user_id)
+        invalidate_leaderboard_cache()
+    except Exception:
+        db.rollback()
+        raise
 
 def get_top_players(db: Session, limit=10):
     cached = get_cached_leaderboard()
