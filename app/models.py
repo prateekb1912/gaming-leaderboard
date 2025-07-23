@@ -21,11 +21,3 @@ class Leaderboard(Base):
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
     total_score = Column(Integer, nullable=False)
     rank = Column(Integer)
-
-    def to_dict(self):
-        return {
-            "user_id": self.user_id,
-            "total_score": self.total_score,
-            "rank": self.rank,
-            "id": self.id
-        }

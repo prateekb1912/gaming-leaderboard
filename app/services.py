@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from .models import GameSession, Leaderboard
+from .models import GameSession, Leaderboard, User
 from .utils import recalculate_leaderboard
 from .cache import get_cached_leaderboard, cache_leaderboard, invalidate_leaderboard_cache
 
@@ -19,8 +19,21 @@ def get_top_players(db: Session, limit=10):
     if cached:
         return cached
     else:
-        players = db.query(Leaderboard).order_by(Leaderboard.total_score.desc()).limit(limit).all()
-        cache_leaderboard([player.to_dict() for player in players])
+        results = db.query(Leaderboard, User.username).join(User, Leaderboard.user_id == User.id).limit(limit).all()
+
+        players = []
+        for leaderboard_entry, username in results:
+            player_data = {
+                "user_id": leaderboard_entry.user_id,
+                "username": username,
+                "total_score": leaderboard_entry.total_score,
+                "rank": leaderboard_entry.rank
+            }
+            players.append(player_data)
+
+        cache_leaderboard(players)
+
+
         return players
 
 def get_user_rank(db: Session, user_id: int):
