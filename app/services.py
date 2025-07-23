@@ -19,7 +19,10 @@ def get_top_players(db: Session, limit=10):
     if cached:
         return cached
     else:
-        results = db.query(Leaderboard, User.username).join(User, Leaderboard.user_id == User.id).order_by(Leaderboard.total_score.desc()).limit(limit).all()
+        try:
+            results = db.query(Leaderboard, User.username).join(User, Leaderboard.user_id == User.id).order_by(Leaderboard.total_score.desc()).limit(limit).all()
+        except Exception as e:
+            return []
 
         players = []
         for leaderboard_entry, username in results:
@@ -36,10 +39,12 @@ def get_top_players(db: Session, limit=10):
         return players
 
 def get_user_rank(db: Session, user_id: int):
-    leaderboard, username =  db.query(Leaderboard, User.username).filter(Leaderboard.user_id == user_id).join(User, Leaderboard.user_id == User.id).first()
+    try:
+        res =  db.query(Leaderboard, User.username).filter(Leaderboard.user_id == user_id).join(User, Leaderboard.user_id == User.id).first()
+    except Exception as e:
+        return None
 
-    if not leaderboard:
-        return {}
+    leaderboard, username = res
 
     return {
         "user_id": leaderboard.user_id,
