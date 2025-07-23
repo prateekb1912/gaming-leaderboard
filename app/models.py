@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, TIMESTAMP, func
-from database import Base
+from .database import Base
 
 class User(Base):
     __tablename__ = "users"
@@ -26,5 +26,6 @@ class Leaderboard(Base):
         return {
             "user_id": self.user_id,
             "total_score": self.total_score,
-            "rank": self.rank
+            "rank": self.rank,
+            "id": self.id
         }

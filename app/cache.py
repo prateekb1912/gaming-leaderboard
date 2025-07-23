@@ -1,16 +1,10 @@
-import redis
+from upstash_redis import Redis
 import json
-import os
 from dotenv import load_dotenv
 
 load_dotenv()
 
-r = redis.Redis(
-    host=os.getenv("REDIS_HOST", "localhost"),
-    port=os.getenv("REDIS_PORT", "6379"),
-    decode_responses=True,
-    password=os.getenv("REDIS_PASSWORD", ""),
-)
+r = Redis.from_env()
 
 def cache_leaderboard(data):
     r.set("top_leaderboard", json.dumps(data), ex=3600)
