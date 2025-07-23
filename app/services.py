@@ -5,14 +5,19 @@ from .cache import get_cached_leaderboard, cache_leaderboard, invalidate_leaderb
 
 def submit_score(db: Session, user_id: int, score: int):
     try:
+        user = db.query(User).filter(User.id == user_id).first()
+        if not user:
+            return {"status": "error", "message": "User not found"}
+
         session = GameSession(user_id=user_id, score=score, game_mode='solo')
         db.add(session)
         db.commit()
         recalculate_leaderboard(db, user_id)
         invalidate_leaderboard_cache()
-    except Exception:
+        return {"status": "success"}
+    except Exception as e:
         db.rollback()
-        return None
+        return {"status": "error", "message": str(e)}
 
 def get_top_players(db: Session, limit=10):
     cached = get_cached_leaderboard()

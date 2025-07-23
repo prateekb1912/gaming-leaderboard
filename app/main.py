@@ -35,9 +35,7 @@ app.add_middleware(
 @app.post("/api/leaderboard/submit")
 def submit(payload: ScoreSubmissionInput, db: Session = Depends(get_db)):
     res = submit_score(db, payload.user_id, payload.score)
-    if res is None:
-        return {"status": "error", "message": "Failed to submit score"}
-    return {"status": "success"}
+    return res
 
 @newrelic.agent.web_transaction(name="top_players")
 @app.get("/api/leaderboard/top")
