@@ -1,3 +1,4 @@
+import newrelic.agent
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
@@ -7,6 +8,7 @@ from .schemas import ScoreSubmissionInput
 from .services import submit_score, get_top_players, get_user_rank
 from fastapi.middleware.cors import CORSMiddleware
 
+newrelic.agent.initialize("newrelic.ini")
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -29,17 +31,19 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
+@newrelic.agent.web_transaction(name="submit_score")
 @app.post("/api/leaderboard/submit")
 def submit(payload: ScoreSubmissionInput, db: Session = Depends(get_db)):
     submit_score(db, payload.user_id, payload.score)
     return {"status": "success"}
 
+@newrelic.agent.web_transaction(name="top_players")
 @app.get("/api/leaderboard/top")
 def top_players(db: Session = Depends(get_db)):
     players = get_top_players(db)
     return players
 
+@newrelic.agent.web_transaction(name="user_rank")
 @app.get("/api/leaderboard/rank/{user_id}")
 def user_rank(user_id: int, db: Session = Depends(get_db)):
     return get_user_rank(db, user_id)
