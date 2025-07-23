@@ -19,7 +19,7 @@ def get_top_players(db: Session, limit=10):
     if cached:
         return cached
     else:
-        results = db.query(Leaderboard, User.username).join(User, Leaderboard.user_id == User.id).limit(limit).all()
+        results = db.query(Leaderboard, User.username).order_by(Leaderboard.rank.asc()).join(User, Leaderboard.user_id == User.id).limit(limit).all()
 
         players = []
         for leaderboard_entry, username in results:
@@ -32,7 +32,6 @@ def get_top_players(db: Session, limit=10):
             players.append(player_data)
 
         cache_leaderboard(players)
-
 
         return players
 
