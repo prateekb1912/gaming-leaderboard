@@ -8,8 +8,6 @@ from .schemas import ScoreSubmissionInput
 from .services import submit_score, get_top_players, get_user_rank
 from fastapi.middleware.cors import CORSMiddleware
 
-newrelic.agent.initialize("./app/newrelic.ini")
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     Base.metadata.create_all(bind=engine)

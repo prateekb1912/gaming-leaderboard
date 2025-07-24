@@ -15,8 +15,7 @@ function App() {
   const [userRank, setUserRank] = useState<UserRank | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // Define BASE_URL inside the component to ensure it's properly bundled
-  const BASE_URL = "https://gaming-leaderboard-9euy.onrender.com";
+  const BASE_URL = "http://localhost:8000";
 
   const fetchLeaderboard = async () => {
     try {
